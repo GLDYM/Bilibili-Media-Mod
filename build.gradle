@@ -9,12 +9,6 @@ buildscript {
     }
 }
 
-
-
-
-
-
-
 plugins {
     id 'eclipse'
     id 'idea'
@@ -113,8 +107,9 @@ dependencies {
     implementation fg.deobf("curse.maven:watermedia-869524:6875641")
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.136")
 
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     tasks.named('processResources', ProcessResources).configure {
         var replaceProperties = [

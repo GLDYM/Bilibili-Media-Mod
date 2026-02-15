@@ -6,8 +6,8 @@ import com.finkkk.bilibili_media.util.SimpleFileServer;
 import com.mojang.logging.LogUtils;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import com.sun.net.httpserver.HttpServer;
 import org.slf4j.Logger;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -25,13 +25,13 @@ public class BiliBiliMedia
     public static HttpServer server;
     public static final UUID MY_UUID = UUID.fromString("99e73d9f-4a4c-447a-8d1a-9877b8dd3a3d");
 
-    public BiliBiliMedia() {
+    public BiliBiliMedia(FMLJavaModLoadingContext context) {
         // 1. 注册配置 (AutoConfig + GsonConfigSerializer)
         AutoConfig.register(BiliBiliMediaConfig.class, GsonConfigSerializer::new);
         config = AutoConfig.getConfigHolder(BiliBiliMediaConfig.class).getConfig();
 
         // 2. 注册 ConfigScreen (Forge 1.20.1 写法)
-        ModLoadingContext.get().registerExtensionPoint(
+        context.registerExtensionPoint(
                 ConfigScreenHandler.ConfigScreenFactory.class,
                 () -> new ConfigScreenHandler.ConfigScreenFactory(
                         (mc, parent) -> BiliBiliMediaConfig.getConfigScreen(parent))

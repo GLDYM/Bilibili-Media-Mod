@@ -24,7 +24,7 @@ public class BiliBiliMediaConfig implements ConfigData {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(Component.translatable("title.bilibili_media.config"))
-                .setDefaultBackgroundTexture(new ResourceLocation(
+                .setDefaultBackgroundTexture(ResourceLocation.fromNamespaceAndPath(
                         BiliBiliMedia.MODID,
                         BilibiliMediaUtil.isFinkkk() ? "textures/gui/finkkk.png" : "icon.png"
                 ));

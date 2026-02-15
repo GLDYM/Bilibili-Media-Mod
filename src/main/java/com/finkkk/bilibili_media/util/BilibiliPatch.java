@@ -54,7 +54,12 @@ public class BilibiliPatch extends AbstractPatch {
         Matcher matcher = pattern.matcher(inputUrl);
 
         if (matcher.find()) {
-            return matcher.group(0);
+            Pattern pPattern = Pattern.compile("p=(\\d+?)", Pattern.CASE_INSENSITIVE);
+            Matcher pMatcher = pPattern.matcher(inputUrl);
+            if(pMatcher.find()){
+                return matcher.group(0) + "?p=" + pMatcher.group(1);
+            }
+            return matcher.group(0) + "?p=1";
         } else {
             throw new FixingURLException(inputUrl, new RuntimeException("url is sus"));
         }
@@ -83,8 +88,7 @@ public class BilibiliPatch extends AbstractPatch {
                 "-F", videoUUID.toString(),
                 "-M", videoUUID.toString(),
                 "--skip-cover",
-                "--skip-subtitle",
-                "-p", "1");
+                "--skip-subtitle");
         // 懒得写视频分辨率解析了，反正WaterMedia又不给
 
         // 设置工作目录
