@@ -10,7 +10,7 @@ import org.watermedia.WaterMedia;
 @Mixin(WaterMedia.class)
 public class IHateWaterMediaMixin {
     @Inject(method = "start", remap = false, at = @At("RETURN"))
-    private void log(CallbackInfo ci){
+    private static void log(CallbackInfo ci){
         // 你知道吗：
         // 我首先看到water media支持YouTube后高兴的打开了代理
         // 然后water media一个无效链接甩我脸上

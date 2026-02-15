@@ -1,7 +1,8 @@
 package com.finkkk.bilibili_media.util;
 
 import com.finkkk.bilibili_media.BiliBiliMedia;
-import org.watermedia.api.network.patchs.AbstractPatch;
+import org.watermedia.api.media.MRL;
+import org.watermedia.api.media.platform.DefaultPlatform;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,44 +13,43 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BilibiliPatch extends AbstractPatch {
+public class BilibiliPatch extends DefaultPlatform {
     @Override
-    public String platform() {
+    public String name() {
         return "bilibili";
     }
 
     @Override
-    public boolean isValid(URI uri) {
+    public boolean validate(URI uri) {
         if(!BiliBiliMedia.config.enable){return false;}
         return uri.toString().contains("b23.tv") || uri.toString().contains("bilibili.com");
     }
 
     @Override
-    public Result patch(URI uri, Quality prefQuality) throws FixingURLException {
-        super.patch(uri, prefQuality);
-        uri = URI.create(extractUrl(uri.toString()));
+    public MRL.Source[] getSources(final URI uri) throws Exception {
+        URI shortURI = URI.create(extractUrl(uri.toString()));
 
-        var dl = BilibiliMediaUtil.tryGetLocalFile(uri.toString());
+        var dl = BilibiliMediaUtil.tryGetLocalFile(shortURI.toString());
         if(dl != null){
-            return new Result(URI.create(dl), false, false);
+            return super.getSources(URI.create(dl));
         }
 
         UUID videoUUID = UUID.randomUUID();
 
-        patchWithBBDown(uri, videoUUID);
+        patchWithBBDown(shortURI, videoUUID);
 
         File outFile;
         var l = BilibiliMediaUtil.getDownloadPath().toFile().listFiles((dir, name) -> name.contains(videoUUID.toString()));
         if(l == null || l.length == 0){
             BiliBiliMedia.LOGGER.error("下载成功，但找不到文件");
-            throw new FixingURLException(uri, new RuntimeException("下载成功但找不到文件"));
+            throw new Exception(new RuntimeException("下载成功但找不到文件" + shortURI));
         }
         outFile = Arrays.asList(l).get(0);
-        BilibiliMediaUtil.updateVideoFile(uri.toString(), outFile);
-        return new Result(BilibiliMediaUtil.getUri(outFile), false, false);
+        BilibiliMediaUtil.updateVideoFile(shortURI.toString(), outFile);
+        return super.getSources(BilibiliMediaUtil.getUri(outFile));
     }
 
-    public static String extractUrl(String inputUrl) throws FixingURLException {
+    public static String extractUrl(String inputUrl) throws Exception {
         Pattern pattern = Pattern.compile("https?://(?:www\\.bilibili\\.com/video/BV\\w+|b23\\.tv/\\w+)", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(inputUrl);
 
@@ -61,21 +61,21 @@ public class BilibiliPatch extends AbstractPatch {
             }
             return matcher.group(0) + "?p=1";
         } else {
-            throw new FixingURLException(inputUrl, new RuntimeException("url is sus"));
+            throw new Exception(new RuntimeException("url is sus"));
         }
     }
 
-    private static void patchWithBBDown(URI uri, UUID videoUUID) throws FixingURLException {
+    private static void patchWithBBDown(URI uri, UUID videoUUID) throws Exception {
         try {
             int exitCode = getExitCode(uri, videoUUID);
             BiliBiliMedia.LOGGER.info("程序以{}退出", exitCode);
             if(exitCode != 0){
-                throw new FixingURLException(uri, new RuntimeException("BBDown下载失败"));
+                throw new Exception(new RuntimeException("BBDown下载失败" + uri));
             }
 
         } catch (IOException | InterruptedException e) {
             BiliBiliMedia.LOGGER.error("BBDown下载失败", e);
-            throw new FixingURLException(uri, new RuntimeException("BBDown下载失败"));
+            throw new Exception(new RuntimeException("BBDown下载失败" + uri));
         }
     }
 

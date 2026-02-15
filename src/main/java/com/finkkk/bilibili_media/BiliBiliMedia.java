@@ -12,7 +12,7 @@ import com.sun.net.httpserver.HttpServer;
 import org.slf4j.Logger;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
-import java.util.UUID;
+//import java.util.UUID;
 
 @Mod(BiliBiliMedia.MODID)
 public class BiliBiliMedia
@@ -23,9 +23,9 @@ public class BiliBiliMedia
 
     public static BiliBiliMediaConfig config;
     public static HttpServer server;
-    public static final UUID MY_UUID = UUID.fromString("99e73d9f-4a4c-447a-8d1a-9877b8dd3a3d");
 
     public BiliBiliMedia(FMLJavaModLoadingContext context) {
+        
         // 1. 注册配置 (AutoConfig + GsonConfigSerializer)
         AutoConfig.register(BiliBiliMediaConfig.class, GsonConfigSerializer::new);
         config = AutoConfig.getConfigHolder(BiliBiliMediaConfig.class).getConfig();

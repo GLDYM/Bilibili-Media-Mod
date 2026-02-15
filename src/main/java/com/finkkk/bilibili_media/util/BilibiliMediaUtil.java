@@ -134,17 +134,6 @@ public class BilibiliMediaUtil {
         }
     }
 
-    public static boolean isFinkkk() {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) {
-            return Objects.equal(
-                    BiliBiliMedia.MY_UUID,
-                    mc.player.getUUID()
-            );
-        }
-        return false;
-    }
-
     public static void tryBBDown() {
         File exe = getDownloadPath().resolve("BBDown.exe").toFile();
         if (!exe.exists()) { //  检查是否存在
