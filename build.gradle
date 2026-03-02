@@ -104,7 +104,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // WaterMedia Forge 1.20.1 (3.0.0-beta.7)
-    implementation fg.deobf("curse.maven:watermedia-869524:7550003")
+    implementation fg.deobf("curse.maven:watermedia-869524:7675866")
     implementation fg.deobf("curse.maven:watermedia-binaries-1029438:7436617")
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.136")
 

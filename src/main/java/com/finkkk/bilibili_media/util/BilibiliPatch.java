@@ -3,6 +3,7 @@ package com.finkkk.bilibili_media.util;
 import com.finkkk.bilibili_media.BiliBiliMedia;
 import org.watermedia.api.media.MRL;
 import org.watermedia.api.media.platform.DefaultPlatform;
+import org.watermedia.api.media.platform.IPlatform.Result;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class BilibiliPatch extends DefaultPlatform {
     }
 
     @Override
-    public MRL.Source[] getSources(final URI uri) throws Exception {
+    public Result getSources(final URI uri) throws Exception {
         URI shortURI = URI.create(extractUrl(uri.toString()));
 
         var dl = BilibiliMediaUtil.tryGetLocalFile(shortURI.toString());
