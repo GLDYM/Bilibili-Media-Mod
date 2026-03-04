@@ -23,7 +23,6 @@ public class BiliBiliMedia
 
     public static BiliBiliMediaConfig config;
     public static HttpServer server;
-    public static final UUID MY_UUID = UUID.fromString("99e73d9f-4a4c-447a-8d1a-9877b8dd3a3d");
 
     public BiliBiliMedia(FMLJavaModLoadingContext context) {
         // 1. 注册配置 (AutoConfig + GsonConfigSerializer)
@@ -52,14 +51,6 @@ public class BiliBiliMedia
             } catch (Exception e) {
                 LOGGER.error("清理缓存失败", e);
             }
-        }
-
-        // 5. 释放/测试依赖工具
-        try {
-            BilibiliMediaUtil.tryBBDown();
-            BilibiliMediaUtil.tryFFmpeg();
-        } catch (Exception e) {
-            LOGGER.error("依赖工具检测失败", e);
         }
 
         // 6. 读取缓存 JSON
