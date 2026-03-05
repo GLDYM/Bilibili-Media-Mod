@@ -19,7 +19,7 @@ public class BiliBiliMediaConfig implements ConfigData {
     public boolean enableCache = true;
     public boolean enableRangeRequests = false;
     public boolean clearOnStartAndStop = true;
-    public int cacheMaxSize = 10;
+    public int cacheMaxSize = 5;
 
     public static Screen getConfigScreen(Screen parent){
         ConfigBuilder builder = ConfigBuilder.create()
