@@ -1,18 +1,17 @@
-package com.finkkk.bilibili_media;
+package dev.polaris_light.bilibili_media;
 
-import com.finkkk.bilibili_media.config.BiliBiliMediaConfig;
-import com.finkkk.bilibili_media.util.BilibiliMediaUtil;
-import com.finkkk.bilibili_media.util.SimpleFileServer;
+import dev.polaris_light.bilibili_media.config.BiliBiliMediaConfig;
+import dev.polaris_light.bilibili_media.util.BilibiliMediaUtil;
+import dev.polaris_light.bilibili_media.util.SimpleFileServer;
 import com.mojang.logging.LogUtils;
+import com.sun.net.httpserver.HttpServer;
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import com.sun.net.httpserver.HttpServer;
 import org.slf4j.Logger;
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
-import java.util.UUID;
 
 @Mod(BiliBiliMedia.MODID)
 public class BiliBiliMedia
@@ -45,15 +44,15 @@ public class BiliBiliMedia
         }
 
         // 4. 启动参数检查
-        if (config.clearOnStart) {
+        if (config.clearOnStartAndStop) {
             try {
-                BilibiliMediaUtil.clearFile();
+                BilibiliMediaUtil.clearCache(config.cacheMaxSize);
             } catch (Exception e) {
                 LOGGER.error("清理缓存失败", e);
             }
         }
 
-        // 6. 读取缓存 JSON
+        // 5. 读取缓存 JSON
         try {
             BilibiliMediaUtil.loadJson();
         } catch (Exception e) {

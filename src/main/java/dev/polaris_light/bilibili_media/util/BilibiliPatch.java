@@ -1,6 +1,6 @@
-package com.finkkk.bilibili_media.util;
+package dev.polaris_light.bilibili_media.util;
 
-import com.finkkk.bilibili_media.BiliBiliMedia;
+import dev.polaris_light.bilibili_media.BiliBiliMedia;
 import org.watermedia.api.network.patchs.AbstractPatch;
 
 import java.net.URI;
@@ -24,7 +24,7 @@ public class BilibiliPatch extends AbstractPatch {
     @Override
     public boolean isValid(URI uri) {
         if(!BiliBiliMedia.config.enable){return false;}
-        return uri.toString().contains("b23.tv") || (uri.toString().contains("bilibili.com") && !uri.toString().contains("live"));
+        return uri.toString().contains("bilibili.com") && !uri.toString().contains("live");
     }
 
     @Override
@@ -32,7 +32,9 @@ public class BilibiliPatch extends AbstractPatch {
         super.patch(uri, prefQuality);
         String shortUrl = extractUrl(uri);
         if (BilibiliMediaUtil.tryGetLocalFile(shortUrl) != null) {
-            URI localUri = URI.create(BilibiliMediaUtil.tryGetLocalFile(shortUrl));
+            String fileName = BilibiliMediaUtil.tryGetLocalFile(shortUrl);
+            URI localUri = BilibiliMediaUtil.getUri(fileName);
+            BilibiliMediaUtil.updateVideoFile(shortUrl, fileName);
             return new Result(localUri, false, true);
         }
 
@@ -43,8 +45,17 @@ public class BilibiliPatch extends AbstractPatch {
                 directUri = patchUri(uri);
 
                 if (directUri != null) {
-                    URI localUri = VideoDownloader.downloadToLocal(URI.create(shortUrl), directUri); 
-                    return new Result(localUri, false, false);
+                    try {
+                        if (!BiliBiliMedia.config.enableCache) {
+                            BiliBiliMedia.LOGGER.info("[bilibili_media] 使用远程链接，很可能无法播放: {}", directUri);
+                            return new Result(directUri, true, false);
+                        }
+                        URI localUri = VideoDownloader.downloadToLocal(URI.create(shortUrl), directUri); 
+                        return new Result(localUri, false, false);
+                    } catch (Exception e) {
+                        BiliBiliMedia.LOGGER.warn("[bilibili_media] 下载文件时发生错误，使用远程链接", e);
+                        return new Result(directUri, true, false);
+                    }
                 } else {
                     BiliBiliMedia.LOGGER.warn("[bilibili_media] 解析链接失败，正在重试... ({} / 5)", i + 1);
                     if (i == 4) {
@@ -76,17 +87,6 @@ public class BilibiliPatch extends AbstractPatch {
         throw new FixingURLException(uri, new RuntimeException("无法获取直接链接"));
     }
 
-    public static String extractUrl(URI uri) throws FixingURLException {
-        String sUri = uri.toString();
-        String bvid = parseBvid(sUri);
-        if (bvid == null) {
-            throw new FixingURLException(uri, new RuntimeException("无法解析BV号"));
-        }
-        int page = parsePage(sUri);
-
-        return "https://www.bilibili.com/video/" + bvid + "?p=" + page;
-    }
-
     public static int parsePage(String url) {
         try {
             Pattern pattern = Pattern.compile("[?&]p=(\\d+)");
@@ -108,6 +108,17 @@ public class BilibiliPatch extends AbstractPatch {
             return matcher.group(1);
         }
         return null;
+    }
+
+    public static String extractUrl(URI uri) throws FixingURLException {
+        String sUri = uri.toString();
+        String bvid = parseBvid(sUri);
+        if (bvid == null) {
+            throw new FixingURLException(uri, new RuntimeException("无法解析BV号"));
+        }
+        int page = parsePage(sUri);
+
+        return "https://www.bilibili.com/video/" + bvid + "?p=" + page;
     }
 
     public URI patchUri(URI uri) throws FixingURLException {

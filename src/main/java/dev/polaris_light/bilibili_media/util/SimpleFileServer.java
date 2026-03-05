@@ -1,6 +1,6 @@
-package com.finkkk.bilibili_media.util;
+package dev.polaris_light.bilibili_media.util;
 
-import com.finkkk.bilibili_media.BiliBiliMedia;
+import dev.polaris_light.bilibili_media.BiliBiliMedia;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -31,8 +31,6 @@ public class SimpleFileServer {
     private static String pendingMessage = null;
 
     public static HttpServer startServer() {
-        enableRangeRequests = BiliBiliMedia.config.enableRangeRequests;
-
         int port = PORT;
         int maxTries = 20;
         HttpServer server = null;

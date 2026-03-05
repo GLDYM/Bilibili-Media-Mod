@@ -1,5 +1,6 @@
-package com.finkkk.bilibili_media.mixin;
+package dev.polaris_light.bilibili_media.mixin;
 
+import dev.polaris_light.bilibili_media.util.BilibiliPatch;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -9,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.watermedia.api.network.NetworkAPI;
 import org.watermedia.api.network.patchs.AbstractPatch;
 import org.watermedia.loaders.ILoader;
-import com.finkkk.bilibili_media.util.BilibiliPatch;
 
 import java.util.List;
 

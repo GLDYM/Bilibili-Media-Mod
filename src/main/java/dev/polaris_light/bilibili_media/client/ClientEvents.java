@@ -1,7 +1,7 @@
-package com.finkkk.bilibili_media.client;
+package dev.polaris_light.bilibili_media.client;
 
-import com.finkkk.bilibili_media.BiliBiliMedia;
-import com.finkkk.bilibili_media.util.SimpleFileServer;
+import dev.polaris_light.bilibili_media.BiliBiliMedia;
+import dev.polaris_light.bilibili_media.util.SimpleFileServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

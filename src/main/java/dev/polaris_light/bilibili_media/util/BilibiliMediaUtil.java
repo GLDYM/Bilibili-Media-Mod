@@ -1,6 +1,6 @@
-package com.finkkk.bilibili_media.util;
+package dev.polaris_light.bilibili_media.util;
 
-import com.finkkk.bilibili_media.BiliBiliMedia;
+import dev.polaris_light.bilibili_media.BiliBiliMedia;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -9,12 +9,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,9 +27,10 @@ public class BilibiliMediaUtil {
         return p;
     }
 
-    public static URI getUri(File file){
-        return URI.create("http://127.0.0.1:" + SimpleFileServer.PORT + "/download?file=" + file.getName());
+    public static URI getUri(String fileName){
+        return URI.create("http://127.0.0.1:" + SimpleFileServer.PORT + "/download?file=" + fileName);
     }
+
 
     public static void loadJson(){
         var p = FMLPaths.GAMEDIR.get().resolve("BiliBiliMediaFiles").resolve("video.json");
@@ -40,7 +39,7 @@ public class BilibiliMediaUtil {
                 if(!p.toFile().createNewFile()){
                     throw new IOException("文件创建失败");
                 }
-                DATA = new HashMap<>();
+                DATA = new LinkedHashMap<>();
                 saveJson();
                 return;
             } catch (IOException e) {
@@ -76,43 +75,38 @@ public class BilibiliMediaUtil {
 
     @Nullable
     public static String tryGetLocalFile(String url){
-        return DATA.get(url);
+        String fileName = DATA.get(url);
+        return fileName == null ? null : fileName;
     }
 
-    public static void updateVideoFile(String url, File file){
-        DATA.put(url, getUri(file).toString());
+    public static void updateVideoFile(String url, String fileName){
+        if (DATA.containsKey(url)) {
+            DATA.remove(url); // 删除旧位置
+        }
+        DATA.put(url, fileName); // 插入到末尾
         saveJson();
     }
 
-    // 受保护文件白名单（统一用小写）
-    private static final Set<String> PROTECTED_FILES = Set.of(
-            "bbdown.exe",
-            "ffmpeg.exe"
-    );
-
-    public static void clearFile() {
+    public static void clearCache(int maxSize) {
         File dir = FMLPaths.GAMEDIR.get().resolve("BiliBiliMediaFiles").toFile();
         if (!dir.exists() && !dir.mkdirs()) {
             BiliBiliMedia.LOGGER.error("目录创建失败: {}", dir.getAbsolutePath());
             return;
         }
 
-        File[] files = dir.listFiles();
-        if (files == null) return;
+        while (DATA.size() > maxSize) {
+            // 获取最早的键
+            String oldestKey = DATA.keySet().iterator().next();
+            String fileName = DATA.remove(oldestKey);
 
-        for (File f : files) {
-            String name = f.getName().toLowerCase();
-            if (PROTECTED_FILES.contains(name)) {
-                continue; // 白名单文件不删除
-            }
-
-            if (f.isDirectory()) {
-                deleteDirectory(f);
-            } else if (!f.delete()) {
-                BiliBiliMedia.LOGGER.warn("无法删除文件: {}", f.getAbsolutePath());
+            File file = FMLPaths.GAMEDIR.get().resolve("BiliBiliMediaFiles").resolve(fileName).toFile();
+            if (file.exists() && !file.delete()) {
+                BiliBiliMedia.LOGGER.warn("无法删除文件: {}", file.getAbsolutePath());
             }
         }
+        saveJson();
     }
+
 
     /** 递归删除文件夹 */
     private static void deleteDirectory(File dir) {

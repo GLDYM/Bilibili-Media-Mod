@@ -1,6 +1,6 @@
-package com.finkkk.bilibili_media.mixin;
+package dev.polaris_light.bilibili_media.mixin;
 
-import com.finkkk.bilibili_media.BiliBiliMedia;
+import dev.polaris_light.bilibili_media.BiliBiliMedia;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
