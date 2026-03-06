@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
@@ -80,9 +81,12 @@ public class SimpleFileServer {
     public static void flushPendingMessage() {
         if (pendingMessage != null && Minecraft.getInstance().player != null) {
             ChatFormatting color = pendingMessage.contains("失败") ? ChatFormatting.RED : ChatFormatting.GREEN;
-            Minecraft.getInstance().player.displayClientMessage(
-                    Component.literal(pendingMessage).withStyle(color), false
-            );
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null) {
+                player.displayClientMessage(
+                        Component.literal(pendingMessage).withStyle(color), false
+                );
+            }
             pendingMessage = null; // 打印后清空
         }
     }

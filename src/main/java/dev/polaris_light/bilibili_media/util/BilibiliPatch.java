@@ -24,13 +24,20 @@ public class BilibiliPatch extends AbstractPatch {
     @Override
     public boolean isValid(URI uri) {
         if(!BiliBiliMedia.config.enable){return false;}
-        return uri.toString().contains("bilibili.com") && !uri.toString().contains("live");
+        return (uri.toString().contains("bilibili.com") && !uri.toString().contains("live")) || uri.toString().contains("b23.tv");
     }
 
     @Override
     public Result patch(URI uri, Quality prefQuality) throws FixingURLException {
         super.patch(uri, prefQuality);
-        String shortUrl = extractUrl(uri);
+        URI longUri;
+        if (uri.toString().contains("b23.tv")) {
+            longUri = BilibiliShortLinkMediaPlayResolver.expand(uri);
+        } else {
+            longUri = uri;
+        }
+
+        String shortUrl = extractUrl(longUri);
         if (BilibiliMediaUtil.tryGetLocalFile(shortUrl) != null) {
             String fileName = BilibiliMediaUtil.tryGetLocalFile(shortUrl);
             URI localUri = BilibiliMediaUtil.getUri(fileName);
@@ -42,7 +49,7 @@ public class BilibiliPatch extends AbstractPatch {
 
         for (int i = 0; i < 5; i++) {
             try {
-                directUri = patchUri(uri);
+                directUri = patchUri(longUri);
 
                 if (directUri != null) {
                     try {
@@ -127,6 +134,7 @@ public class BilibiliPatch extends AbstractPatch {
         if (bvid == null) {
             throw new FixingURLException(uri, new RuntimeException("无法解析BV号"));
         }
+        
         int page = parsePage(sUri);
         
         try {
