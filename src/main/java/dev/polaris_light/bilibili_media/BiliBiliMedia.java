@@ -43,20 +43,20 @@ public class BiliBiliMedia
             LOGGER.warn("BilibiliMedia SimpleFileServer 启动失败，本地视频缓存功能已禁用");
         }
 
-        // 4. 启动参数检查
+        // 4. 读取缓存 JSON
+        try {
+            BilibiliMediaUtil.loadJson();
+        } catch (Exception e) {
+            LOGGER.error("加载缓存 JSON 失败", e);
+        }
+
+        // 5. 清理过期缓存
         if (config.clearOnStartAndStop) {
             try {
                 BilibiliMediaUtil.clearCache(config.cacheMaxSize);
             } catch (Exception e) {
                 LOGGER.error("清理缓存失败", e);
             }
-        }
-
-        // 5. 读取缓存 JSON
-        try {
-            BilibiliMediaUtil.loadJson();
-        } catch (Exception e) {
-            LOGGER.error("加载缓存 JSON 失败", e);
         }
     }
 }

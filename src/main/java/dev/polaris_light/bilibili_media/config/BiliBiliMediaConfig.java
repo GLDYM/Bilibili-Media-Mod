@@ -17,6 +17,8 @@ import net.minecraft.resources.ResourceLocation;
 public class BiliBiliMediaConfig implements ConfigData {
     public boolean enable = true;
     public boolean enableCache = true;
+    public boolean enableYhdm = false;
+    public boolean enableYhdmCache = false;
     public boolean enableRangeRequests = false;
     public boolean clearOnStartAndStop = true;
     public int cacheMaxSize = 5;
@@ -35,9 +37,18 @@ public class BiliBiliMediaConfig implements ConfigData {
                 .setSaveConsumer(x->BiliBiliMedia.config.enable = x)
                 .setDefaultValue(true)
                 .build());
-        general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.bili_media_enable_cache"), BiliBiliMedia.config.enableCache)
+        general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.bilibili_media.enable_cache"), BiliBiliMedia.config.enableCache)
                 .setSaveConsumer(x->BiliBiliMedia.config.enableCache = x)
-                .setTooltip(Component.translatable("config.bili_media_enable_cache.tip"))
+                .setTooltip(Component.translatable("config.bilibili_media.enable_cache.tip"))
+                .setDefaultValue(true)
+                .build());
+        general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.bilibili_media.enable_yhdm"), BiliBiliMedia.config.enableYhdm)
+                .setSaveConsumer(x->BiliBiliMedia.config.enableYhdm = x)
+                .setDefaultValue(true)
+                .build());
+        general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.bilibili_media.enable_yhdm_cache"), BiliBiliMedia.config.enableYhdmCache)
+                .setSaveConsumer(x->BiliBiliMedia.config.enableYhdmCache = x)
+                .setTooltip(Component.translatable("config.bilibili_media.enable_yhdm_cache.tip"))
                 .setDefaultValue(true)
                 .build());
         general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.bilibili_media.enable_range_requests"), BiliBiliMedia.config.enableRangeRequests)

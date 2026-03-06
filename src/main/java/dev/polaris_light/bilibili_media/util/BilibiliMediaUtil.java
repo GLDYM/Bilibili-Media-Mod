@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BilibiliMediaUtil {
@@ -80,9 +82,9 @@ public class BilibiliMediaUtil {
 
     public static void updateVideoFile(String url, String fileName){
         if (DATA.containsKey(url)) {
-            DATA.remove(url); // 删除旧位置
+            DATA.remove(url);
         }
-        DATA.put(url, fileName); // 插入到末尾
+        DATA.put(url, fileName);
         saveJson();
     }
 
@@ -93,8 +95,20 @@ public class BilibiliMediaUtil {
             return;
         }
 
+        List<String> invalidKeys = new ArrayList<>();
+        for (Map.Entry<String, String> entry : DATA.entrySet()) {
+            File file = FMLPaths.GAMEDIR.get().resolve("BiliBiliMediaFiles").resolve(entry.getValue()).toFile();
+            if (!file.exists()) {
+                invalidKeys.add(entry.getKey());
+            }
+        }
+
+        for (String key : invalidKeys) {
+            DATA.remove(key);
+            BiliBiliMedia.LOGGER.info("移除失效缓存: {}", key);
+        }
+
         while (DATA.size() > maxSize) {
-            // 获取最早的键
             String oldestKey = DATA.keySet().iterator().next();
             String fileName = DATA.remove(oldestKey);
 
@@ -103,8 +117,10 @@ public class BilibiliMediaUtil {
                 BiliBiliMedia.LOGGER.warn("无法删除文件: {}", file.getAbsolutePath());
             }
         }
+
         saveJson();
     }
+
 
 
     /** 递归删除文件夹 */

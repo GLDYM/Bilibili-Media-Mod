@@ -14,7 +14,7 @@ import java.nio.file.Path;
 public class VideoDownloader {
 
     /**
-     * 下载远程 mp4 文件到本地，并返回本地服务器的 URI
+     * 下载远程文件到本地，并返回本地服务器的 URI
      * @param shortUri 短链 (BV号 + 分P)
      * @param directUri 直链 (临时)
      */
