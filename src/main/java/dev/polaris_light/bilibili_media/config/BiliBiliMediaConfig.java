@@ -44,12 +44,12 @@ public class BiliBiliMediaConfig implements ConfigData {
                 .build());
         general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.bilibili_media.enable_yhdm"), BiliBiliMedia.config.enableYhdm)
                 .setSaveConsumer(x->BiliBiliMedia.config.enableYhdm = x)
-                .setDefaultValue(true)
+                .setDefaultValue(false)
                 .build());
         general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.bilibili_media.enable_yhdm_cache"), BiliBiliMedia.config.enableYhdmCache)
                 .setSaveConsumer(x->BiliBiliMedia.config.enableYhdmCache = x)
                 .setTooltip(Component.translatable("config.bilibili_media.enable_yhdm_cache.tip"))
-                .setDefaultValue(true)
+                .setDefaultValue(false)
                 .build());
         general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.bilibili_media.enable_range_requests"), BiliBiliMedia.config.enableRangeRequests)
                 .setSaveConsumer(x->BiliBiliMedia.config.enableRangeRequests = x)
