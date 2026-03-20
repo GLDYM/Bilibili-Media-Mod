@@ -2,14 +2,15 @@ package dev.polaris_light.bilibili_media.client;
 
 import dev.polaris_light.bilibili_media.BiliBiliMedia;
 import dev.polaris_light.bilibili_media.util.SimpleFileServer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 
-@Mod.EventBusSubscriber(modid = BiliBiliMedia.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = BiliBiliMedia.ModID, value = Dist.CLIENT)
 public class ClientEvents {
     @SubscribeEvent
-    public static void onPlayerLogin(net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggingIn event) {
+    public static void onPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event) {
         SimpleFileServer.flushPendingMessage();
     }
 }

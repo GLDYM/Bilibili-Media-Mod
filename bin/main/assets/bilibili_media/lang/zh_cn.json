@@ -1,0 +1,20 @@
+{
+  "modmenu.nameTranslation.bilibili_media": "哔哩哔哩WaterMedia兼容",
+  "modmenu.descriptionTranslation.bilibili_media": "使得WaterMedia传入B站链接可直接播放B站视频",
+  "modmenu.summaryTranslation.bilibili_media": "WaterMedia的哔哩哔哩插件",
+  "title.bilibili_media.config": "哔哩哔哩WaterMedia兼容 模组设置",
+  "config.bilibili_media.enable": "启用B站解析",
+  "config.bilibili_media.enable.tip": "启用或禁用B站解析",
+  "config.bilibili_media.enable_cache": "启用B站缓存",
+  "config.bilibili_media.enable_cache.tip": "启用B站视频缓存，禁用此选项很可能导致播放失败！",
+  "config.bilibili_media.enable_yhdm": "启用樱花动漫解析",
+  "config.bilibili_media.enable_yhdm.tip": "启用或禁用樱花动漫解析",
+  "config.bilibili_media.enable_yhdm_cache": "[beta]启用樱花动漫缓存",
+  "config.bilibili_media.enable_yhdm_cache.tip": "缓存樱花动漫的视频，可能导致无法播放。",
+  "config.bilibili_media.enable_range_requests": "[beta]启用断点续传",
+  "config.bilibili_media.enable_range_requests.tip": "此项不稳定，可能导致WaterMedia无法显示视频",
+  "config.bilibili_media.clear_on_start_and_stop": "清理视频缓存",
+  "config.bilibili_media.clear_on_start_and_stop.tip": "每次开启关闭游戏时清理视频缓存，直至最大缓存大小",
+  "config.bilibili_media.cache_max_size": "最大缓存大小",
+  "config.bilibili_media.cache_max_size.tip": "最大缓存大小，0 为清理所有缓存"
+}

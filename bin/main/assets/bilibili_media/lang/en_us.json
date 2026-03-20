@@ -1,0 +1,20 @@
+{
+  "modmenu.nameTranslation.bilibili_media": "Bilibili WaterMedia Compatibility",
+  "modmenu.descriptionTranslation.bilibili_media": "I hate water media",
+  "modmenu.summaryTranslation.bilibili_media": "Bilibili plugin for WaterMedia",
+  "title.bilibili_media.config": "Bilibili WaterMedia Compatibility Mod Settings",
+  "config.bilibili_media.enable": "Enable Bilibili Resolver",
+  "config.bilibili_media.enable.tip": "Enable or disable the Bilibili resolver",
+  "config.bilibili_media.enable_cache": "Enable Bilibili Cache",
+  "config.bilibili_media.enable_cache.tip": "Enable Bilibili video caching, disable this option will very likely make the play fail!",
+  "config.bilibili_media.enable_yhdm": "Enable YHDM Resolver",
+  "config.bilibili_media.enable_yhdm.tip": "Enable or disable the YHDM resolver",
+  "config.bilibili_media.enable_yhdm_cache": "[beta] Enable YHDM Cache",
+  "config.bilibili_media.enable_yhdm_cache.tip": "Enable caching for YHDM resolved videos, may cause display issues.",
+  "config.bilibili_media.enable_range_requests": "[beta] Enable Range Requests",
+  "config.bilibili_media.enable_range_requests.tip": "This option is unstable and may cause WaterMedia to fail to display videos",
+  "config.bilibili_media.clear_on_start_and_stop": "Clear video cache",
+  "config.bilibili_media.clear_on_start_and_stop.tip": "Clear video cache on each start and stop until max cache size",
+  "config.bilibili_media.cache_max_size": "Max cache size",
+  "config.bilibili_media.cache_max_size.tip": "Maximum cache size, 0 to clear all cache"
+}

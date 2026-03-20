@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 
-@Config(name = BiliBiliMedia.MODID)
+@Config(name = BiliBiliMedia.ModID)
 public class BiliBiliMediaConfig implements ConfigData {
     public boolean enable = true;
     public boolean enableCache = true;
@@ -28,7 +28,7 @@ public class BiliBiliMediaConfig implements ConfigData {
                 .setParentScreen(parent)
                 .setTitle(Component.translatable("title.bilibili_media.config"))
                 .setDefaultBackgroundTexture(ResourceLocation.fromNamespaceAndPath(
-                        BiliBiliMedia.MODID,
+                        BiliBiliMedia.ModID,
                         "icon.png"
                 ));
         ConfigCategory general = builder.getOrCreateCategory(Component.translatable("title.bilibili_media.config"));

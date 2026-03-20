@@ -4,7 +4,7 @@ import dev.polaris_light.bilibili_media.BiliBiliMedia;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLPaths;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;

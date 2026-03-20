@@ -2,11 +2,11 @@ package dev.polaris_light.bilibili_media.event;
 
 import dev.polaris_light.bilibili_media.BiliBiliMedia;
 import dev.polaris_light.bilibili_media.util.BilibiliMediaUtil;
-import net.minecraftforge.event.GameShuttingDownEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.GameShuttingDownEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
-@Mod.EventBusSubscriber(modid = BiliBiliMedia.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = BiliBiliMedia.ModID)
 public class ClientShutdownHandler {
 
     @SubscribeEvent
