@@ -11,6 +11,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
 public final class BiliAuthCommands {
@@ -82,14 +83,24 @@ public final class BiliAuthCommands {
 
     private static void startLogin() {
         BiliAuthService.getInstance().loginByQrAsync(qrUrl -> {
-            String qrImageUrl = BiliQrCodeEncoder.toQrImageUrl(qrUrl);
             sendMessage(Component.literal("请用手机扫描二维码登录 bilibili:").withStyle(ChatFormatting.AQUA));
-            Style style = Style.EMPTY
-                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, qrImageUrl))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("点击打开二维码图片").withStyle(ChatFormatting.GRAY)))
+            String qrImageUrl = BiliQrCodeEncoder.toQrImageUrl(qrUrl);
+            Component qrHover = buildQrHoverComponent(qrUrl);
+            Style hoverStyle = Style.EMPTY
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, qrHover))
                 .withColor(ChatFormatting.GREEN)
                 .withUnderlined(true);
-            sendMessage(Component.literal("[点我打开二维码]").setStyle(style));
+
+            Style fallbackStyle = Style.EMPTY
+                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, qrImageUrl))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("点击打开二维码图片").withStyle(ChatFormatting.GRAY)))
+                .withColor(ChatFormatting.YELLOW)
+                .withUnderlined(true);
+
+            sendMessage(Component.empty()
+                    .append(Component.literal("[悬停查看二维码]").setStyle(hoverStyle))
+                    .append(Component.literal(" "))
+                    .append(Component.literal("[备用打开二维码]").setStyle(fallbackStyle)));
         }).thenAccept(result -> {
             if (result.startsWith("已登录:")) {
                 sendMessage(buildLoginSuccessComponent(result));
@@ -131,6 +142,20 @@ public final class BiliAuthCommands {
         return Component.empty()
                 .append(Component.literal(text.substring(0, index + 1)).withStyle(prefixColor))
                 .append(Component.literal(" " + text.substring(index + 1).trim()));
+    }
+
+    private static Component buildQrHoverComponent(String qrUrl) {
+        MutableComponent hover = Component.empty();
+        hover.append(Component.literal("扫描二维码登录\n").withStyle(ChatFormatting.GRAY));
+
+        java.util.List<Component> lines = BiliQrCodeEncoder.toChatQrComponents(qrUrl);
+        for (int i = 0; i < lines.size(); i++) {
+            hover.append(lines.get(i));
+            if (i < lines.size() - 1) {
+                hover.append(Component.literal("\n"));
+            }
+        }
+        return hover;
     }
 
     private static void sendMessage(String text) {
