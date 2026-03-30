@@ -118,5 +118,5 @@ runs/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
-/src/main/java/com/gly091020/BiliBiliMedia/bbdown/BBDown.exe
+/src/main/java/dev.polaris_light/BiliBiliMedia/bbdown/BBDown.exe
 /src/main/resources/assets/bilibili_media/bbdown/BBDown.exe

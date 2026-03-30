@@ -17,5 +17,5 @@ Plugin for WATERMeDIA which adds bilibili support without BBDown.
 ##  Reference
 
 - [BiliBiliMedia](https://modrinth.com/mod/bilibilimedia)  
-- [BilibiliMediaNeo](https://gitee.com/gly091020/bilibiliMediaNeo)
+- [BilibiliMediaNeo](https://gitee.dev.polaris_light/bilibiliMediaNeo)
 - [Mcedia](https://github.com/tobyprime/Mcedia)

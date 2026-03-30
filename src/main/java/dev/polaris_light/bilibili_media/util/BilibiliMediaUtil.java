@@ -13,12 +13,15 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class BilibiliMediaUtil {
     private static Map<String, String> DATA;
+
+    public record CacheRemoveResult(boolean found, String fileName, boolean fileDeleted) {}
 
     public static Path getDownloadPath(){
         var p = FMLPaths.GAMEDIR.get().resolve("BiliBiliMediaFiles");
@@ -76,11 +79,13 @@ public class BilibiliMediaUtil {
 
     @Nullable
     public static String tryGetLocalFile(String url){
+        ensureDataLoaded();
         String fileName = DATA.get(url);
         return fileName == null ? null : fileName;
     }
 
     public static void updateVideoFile(String url, String fileName){
+        ensureDataLoaded();
         if (DATA.containsKey(url)) {
             DATA.remove(url);
         }
@@ -88,7 +93,38 @@ public class BilibiliMediaUtil {
         saveJson();
     }
 
+    public static List<String> getCacheKeys() {
+        ensureDataLoaded();
+        return Collections.unmodifiableList(new ArrayList<>(DATA.keySet()));
+    }
+
+    public static CacheRemoveResult removeCacheByKey(String key) {
+        ensureDataLoaded();
+        if (key == null || key.isBlank()) {
+            return new CacheRemoveResult(false, null, false);
+        }
+
+        String fileName = DATA.remove(key);
+        if (fileName == null) {
+            return new CacheRemoveResult(false, null, false);
+        }
+
+        boolean deleted = false;
+        File file = FMLPaths.GAMEDIR.get().resolve("BiliBiliMediaFiles").resolve(fileName).toFile();
+        if (!file.exists()) {
+            deleted = true;
+        } else if (file.delete()) {
+            deleted = true;
+        } else {
+            BiliBiliMedia.LOGGER.warn("无法删除缓存文件: {}", file.getAbsolutePath());
+        }
+
+        saveJson();
+        return new CacheRemoveResult(true, fileName, deleted);
+    }
+
     public static void clearCache(int maxSize) {
+        ensureDataLoaded();
         File dir = FMLPaths.GAMEDIR.get().resolve("BiliBiliMediaFiles").toFile();
         if (!dir.exists() && !dir.mkdirs()) {
             BiliBiliMedia.LOGGER.error("目录创建失败: {}", dir.getAbsolutePath());
@@ -119,6 +155,15 @@ public class BilibiliMediaUtil {
         }
 
         saveJson();
+    }
+
+    private static void ensureDataLoaded() {
+        if (DATA == null) {
+            loadJson();
+            if (DATA == null) {
+                DATA = new LinkedHashMap<>();
+            }
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package dev.polaris_light.bilibili_media.util;
 
 import dev.polaris_light.bilibili_media.BiliBiliMedia;
+import dev.polaris_light.bilibili_media.auth.BiliCookieStore;
 import org.watermedia.api.network.patchs.AbstractPatch;
 
 import java.net.URI;
@@ -15,6 +16,8 @@ import com.google.gson.JsonParser;
 
 public class BilibiliPatch extends AbstractPatch {
     private static final HttpClient client = HttpClient.newHttpClient();
+    private static final int MAX_RETRIES = 5;
+    private static final long RETRY_DELAY_MS = 2000L;
 
     @Override
     public String platform() {
@@ -24,7 +27,7 @@ public class BilibiliPatch extends AbstractPatch {
     @Override
     public boolean isValid(URI uri) {
         if(!BiliBiliMedia.config.enable){return false;}
-        return (uri.toString().contains("bilibili.com") && !uri.toString().contains("live")) || uri.toString().contains("b23.tv");
+        return (uri.toString().contains("bilibili.com") && !uri.toString().contains("live") && !uri.toString().contains("bangumi")) || uri.toString().contains("b23.tv");
     }
 
     @Override
@@ -47,7 +50,7 @@ public class BilibiliPatch extends AbstractPatch {
 
         URI directUri;
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < MAX_RETRIES; i++) {
             try {
                 directUri = patchUri(longUri);
 
@@ -64,12 +67,12 @@ public class BilibiliPatch extends AbstractPatch {
                         return new Result(directUri, true, false);
                     }
                 } else {
-                    BiliBiliMedia.LOGGER.warn("[bilibili_media] 解析链接失败，正在重试... ({} / 5)", i + 1);
-                    if (i == 4) {
+                    BiliBiliMedia.LOGGER.warn("[bilibili_media] 解析链接失败，正在重试... ({} / {})", i + 1, MAX_RETRIES);
+                    if (i == MAX_RETRIES - 1) {
                         throw new FixingURLException(uri, new RuntimeException("无法获取直接链接"));
                     } else {
                         try {
-                            Thread.sleep(2000); // 等待2秒后重试
+                            Thread.sleep(RETRY_DELAY_MS); // 等待2秒后重试
                         } catch (InterruptedException ie) {
                             Thread.currentThread().interrupt();
                             throw new FixingURLException(uri, new RuntimeException("解析过程中被中断"));
@@ -77,12 +80,12 @@ public class BilibiliPatch extends AbstractPatch {
                     }
                 }
             } catch (FixingURLException e) {
-                BiliBiliMedia.LOGGER.warn("[bilibili_media] 解析链接失败，正在重试... ({} / 5)", i + 1);
-                if (i == 4) {
+                BiliBiliMedia.LOGGER.warn("[bilibili_media] 解析链接失败，正在重试... ({} / {})", i + 1, MAX_RETRIES);
+                if (i == MAX_RETRIES - 1) {
                     throw new FixingURLException(uri, new RuntimeException("无法获取直接链接"));
                 } else {
                     try {
-                        Thread.sleep(2000); // 等待2秒后重试
+                        Thread.sleep(RETRY_DELAY_MS); // 等待2秒后重试
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         throw new FixingURLException(uri, new RuntimeException("解析过程中被中断"));
@@ -158,7 +161,11 @@ public class BilibiliPatch extends AbstractPatch {
         String viewApi = "https://api.bilibili.com/x/web-interface/wbi/view?bvid=" + bvid;
 
         try {
-            HttpRequest viewRequest = HttpRequest.newBuilder().uri(URI.create(viewApi)).header("User-Agent", "Mozilla/5.0").build();
+                HttpRequest.Builder viewBuilder = HttpRequest.newBuilder()
+                    .uri(URI.create(viewApi))
+                    .header("User-Agent", "Mozilla/5.0");
+                BiliCookieStore.withCookie(viewBuilder);
+                HttpRequest viewRequest = viewBuilder.build();
             HttpResponse<String> viewResponse = client.send(viewRequest, HttpResponse.BodyHandlers.ofString());
             JsonObject viewJson = JsonParser.parseString(viewResponse.body()).getAsJsonObject();
 
@@ -189,11 +196,12 @@ public class BilibiliPatch extends AbstractPatch {
         String playApi = "https://api.bilibili.com/x/player/wbi/playurl?bvid=" + bvid + "&cid=" + cid + "&qn=116&type=&otype=json&platform=html5&high_quality=1";
 
         try {
-            HttpRequest playUrlRequest = HttpRequest.newBuilder().uri(URI.create(playApi))
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-                .header("Referer", "https://www.bilibili.com/")
-                .header("Origin", "https://www.bilibili.com")
-                .build();
+                HttpRequest.Builder playBuilder = HttpRequest.newBuilder().uri(URI.create(playApi))
+                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                    .header("Referer", "https://www.bilibili.com/")
+                    .header("Origin", "https://www.bilibili.com");
+                BiliCookieStore.withCookie(playBuilder);
+                HttpRequest playUrlRequest = playBuilder.build();
 
             HttpResponse<String> playUrlResponse = client.send(playUrlRequest, HttpResponse.BodyHandlers.ofString());
             JsonObject playUrlJson = JsonParser.parseString(playUrlResponse.body()).getAsJsonObject();

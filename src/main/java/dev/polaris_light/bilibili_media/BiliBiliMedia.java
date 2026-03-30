@@ -1,6 +1,7 @@
 package dev.polaris_light.bilibili_media;
 
 import dev.polaris_light.bilibili_media.config.BiliBiliMediaConfig;
+import dev.polaris_light.bilibili_media.auth.BiliCookieStore;
 import dev.polaris_light.bilibili_media.util.BilibiliMediaUtil;
 import dev.polaris_light.bilibili_media.util.SimpleFileServer;
 import com.sun.net.httpserver.HttpServer;
@@ -27,6 +28,7 @@ public class BiliBiliMedia
     public BiliBiliMedia(ModContainer container) {
         AutoConfig.register(BiliBiliMediaConfig.class, GsonConfigSerializer::new);
         config = AutoConfig.getConfigHolder(BiliBiliMediaConfig.class).getConfig();
+        BiliCookieStore.init();
         container.registerExtensionPoint(IConfigScreenFactory.class, (mc, parent) ->
                 BiliBiliMediaConfig.getConfigScreen(parent));
 
