@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.polaris_light.bilibili_media.util.BilibiliMediaUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
@@ -14,6 +15,8 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 
 public final class BiliAuthCommands {
+    private static BiliAuthQrScreen currentQrScreen;
+
     private BiliAuthCommands() {
     }
 
@@ -83,19 +86,41 @@ public final class BiliAuthCommands {
     private static void startLogin() {
         BiliAuthService.getInstance().loginByQrAsync(qrUrl -> {
             String qrImageUrl = BiliQrCodeEncoder.toQrImageUrl(qrUrl);
-            sendMessage(Component.literal("请用手机扫描二维码登录 bilibili:").withStyle(ChatFormatting.AQUA));
+            openQrScreen(qrImageUrl);
+            sendMessage(Component.literal("请扫描屏幕上显示的二维码以登陆。").withStyle(ChatFormatting.AQUA));
+            sendMessage(Component.literal("如果无法扫描，请点击下方按钮在浏览器内打开。").withStyle(ChatFormatting.AQUA));
             Style style = Style.EMPTY
                 .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, qrImageUrl))
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("点击打开二维码图片").withStyle(ChatFormatting.GRAY)))
                 .withColor(ChatFormatting.GREEN)
                 .withUnderlined(true);
-            sendMessage(Component.literal("[点我打开二维码]").setStyle(style));
+            sendMessage(Component.literal("[点我在浏览器打开]").setStyle(style));
         }).thenAccept(result -> {
+            closeQrScreenIfOpen();
             if (result.startsWith("已登录:")) {
                 sendMessage(buildLoginSuccessComponent(result));
             } else {
                 sendMessage(colorPrefix(result, ChatFormatting.RED));
             }
+        });
+    }
+
+    private static void openQrScreen(String qrImageUrl) {
+        Minecraft mc = Minecraft.getInstance();
+        mc.execute(() -> {
+            currentQrScreen = new BiliAuthQrScreen(qrImageUrl);
+            mc.setScreen(currentQrScreen);
+        });
+    }
+
+    private static void closeQrScreenIfOpen() {
+        Minecraft mc = Minecraft.getInstance();
+        mc.execute(() -> {
+            Screen current = mc.screen;
+            if (currentQrScreen != null && current == currentQrScreen) {
+                mc.setScreen(null);
+            }
+            currentQrScreen = null;
         });
     }
 

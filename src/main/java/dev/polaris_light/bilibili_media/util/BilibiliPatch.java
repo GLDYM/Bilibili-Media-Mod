@@ -27,7 +27,9 @@ public class BilibiliPatch extends AbstractPatch {
     @Override
     public boolean isValid(URI uri) {
         if(!BiliBiliMedia.config.enable){return false;}
-        return (uri.toString().contains("bilibili.com") && !uri.toString().contains("live") && !uri.toString().contains("bangumi")) || uri.toString().contains("b23.tv");
+        return (uri.toString().contains("bilibili.com") 
+            && uri.toString().contains("BV")) 
+            || uri.toString().contains("b23.tv");
     }
 
     @Override
