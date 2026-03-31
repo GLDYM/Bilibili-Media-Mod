@@ -167,3 +167,7 @@ dependencies {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
     }
 }
+
+tasks.named('jar') {
+    archiveFileName.set("${mod_id}-${mod_version}-forge.jar")
+}
